@@ -1,0 +1,19 @@
+<?xml version='1.0' standalone='yes'?>
+<extension>
+  <name>PLUGIN_XSQUEEZEDISPLAY</name>
+  <id>d5e3c4cd-fbe9-4767-9d6c-3674cb195429</id>
+  <creator>bossanova808</creator>
+  <defaultState>enabled</defaultState>
+  <description>PLUGIN_XSQUEEZEDISPLAY</description>
+  <email>bossanova808@gmail.com</email>
+  <homepageURL></homepageURL>
+  <optionsURL>plugins/XSqueezeDisplay/settings.html</optionsURL>
+  <module>Plugins::XSqueezeDisplay::Plugin</module>
+  <targetApplication>
+    <id>SqueezeCenter</id>
+    <maxVersion>*</maxVersion>
+    <minVersion>7.5</minVersion>
+  </targetApplication>
+  <type>2</type>
+  <version>0.6</version>
+</extension>
