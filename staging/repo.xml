@@ -6,7 +6,7 @@
 	<plugins>
 		<plugin name="XSqueezeDisplay" version="0.6" minTarget="7.7" maxTarget="*">
 			<title lang="EN">XSqueezeDisplay</title>
-			<desc lang="EN">Display Kodi (XBMC) Now Playing info on a Squeezebox SB2/3/Classic display</desc>
+			<desc lang="EN">Display Kodi (XBMC) Now Playing info on a Squeezebox SB2/3/Classic display.</desc>
 			<url>http://github.com/bossanova808/repository.squeeze.bossanova808/raw/master/downloads/XSqueezeDisplay/XSqueezeDisplay-0.8.zip</url>
 			<creator>bossanova808</creator>
 			<email>bossanova808@gmail.com</email>
