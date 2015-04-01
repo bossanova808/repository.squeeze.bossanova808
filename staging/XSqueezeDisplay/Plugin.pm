@@ -219,7 +219,7 @@ sub screensaverXSqueezeDisplayLines {
 			my $message = decode_json $resp->decoded_content;
 			
 			#A PLAYER IS ACTIVE
-			if (@{$message->{result}}){
+			if  (exists $message->{result}){
 
 		    	#myDebug("Detected player activity - " . $resp->decoded_content);
 		    	$state = "Playing";
