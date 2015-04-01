@@ -18,7 +18,7 @@ use Slim::Utils::Prefs;
 use Slim::Utils::Log;
 use LWP::UserAgent;
 use POSIX qw(strftime);
-use JSON;
+use JSON::XS;
 
 use constant CONNECTION_ATTEMPTS_BEFORE_SLEEP => 2;
 use constant SLEEP_PERIOD => 10;
@@ -246,14 +246,14 @@ sub screensaverXSqueezeDisplayLines {
 						$resp = kodiJSON($post_data);
 						$message = decode_json $resp->decoded_content;
 
-						my $duration = ($message->{'result'}{'totaltime'}{'minutes'} * 60) + $message->{'result'}{'totaltime'}{'seconds'};
+						my $duration = ($message->{'result'}{'totaltime'}{'hours'} * 60 * 60) + ($message->{'result'}{'totaltime'}{'minutes'} * 60) + $message->{'result'}{'totaltime'}{'seconds'};
 						my $elapsed = ($message->{'result'}{'time'}{'minutes'} * 60) + $message->{'result'}{'time'}{'seconds'};
 						my $difference = $duration - $elapsed;
 						my $difference_hours = ($difference/(60*60))%24;
 						my $difference_minutes = ($difference/60)%60;
 						my $difference_seconds = $difference%60;
-						#myDebug("Hours " . $hours . " Minutes " . $minutes . " Seconds " . $seconds);
-						if ($difference_hours ne "0"){
+						#myDebug("Difference " .  $difference . " Hours " . $difference_hours . " Minutes " . $difference_minutes . " Seconds " . $difference_seconds);
+						if ($difference_hours != 0){
 							$timeRemaining = sprintf("-%02d:%02d:%02d", $difference_hours, $difference_minutes, $difference_seconds)
 						}
 						else {
