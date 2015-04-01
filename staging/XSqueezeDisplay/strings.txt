@@ -29,13 +29,13 @@ PLUGIN_XSQUEEZEDISPLAY_KODIJSONPASSWORD_DESC
 	EN	Enter the password for the KODI JSON interface
 
 PLUGIN_XSQUEEZEDISPLAY_LINE1
-	EN	Template for line1
+	EN	Template for line1 NOT YET USED
 
 PLUGIN_XSQUEEZEDISPLAY_LINE1_DESC
 	EN	Enter the template for the data you want displayed on line1 (not visible if font size is the biggest)
 
 PLUGIN_XSQUEEZEDISPLAY_LINE2
-	EN	Template for line2
+	EN	Template for line2 NOT YET USED
 
 PLUGIN_XSQUEEZEDISPLAY_LINE2_DESC
 	EN	Enter the template for the data you want displayed on line2 (this is the only line you'll see if font size is the biggest)
