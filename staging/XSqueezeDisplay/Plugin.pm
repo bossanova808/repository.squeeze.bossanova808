@@ -17,7 +17,6 @@ use Slim::Utils::Strings qw (string);
 use Slim::Utils::Prefs;
 use Slim::Utils::Log;
 use LWP::UserAgent;
-use POSIX qw(strftime);
 use JSON::XS;
 
 use constant CONNECTION_ATTEMPTS_BEFORE_SLEEP => 2;
