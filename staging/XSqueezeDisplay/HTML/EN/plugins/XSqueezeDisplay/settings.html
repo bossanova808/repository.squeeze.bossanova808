@@ -1,77 +1,111 @@
 [% PROCESS settings/header.html %]
-	<br>
-	<p>
-	These are the settings needed to connect to Kodi.  See the Kodi wiki on <a href="http://kodi.wiki/view/Webserver">Kodi Web Server</a> for details
-	</p>
+    <br>
+    <p>
+    These are the settings needed to connect to Kodi.  See the Kodi wiki on <a href="http://kodi.wiki/view/Webserver">Kodi Web Server</a> for details
+    </p>
 
-	[% WRAPPER setting title="PLUGIN_XSQUEEZEDISPLAY_KODIIP" desc="PLUGIN_XSQUEEZEDISPLAY_KODIIP_DESC" %]
-		<input type="text" class="stdedit" name="plugin_xsqueezedisplay_kodiip" id="plugin_xsqueezedisplay_kodiip" value="[% prefs.plugin_xsqueezedisplay_kodiip %]" size="40">
-	[% END %]
-	[% WRAPPER setting title="PLUGIN_XSQUEEZEDISPLAY_KODIJSONPORT" desc="PLUGIN_XSQUEEZEDISPLAY_KODIJSONPORT_DESC" %]
-		<input type="text" class="stdedit" name="plugin_xsqueezedisplay_kodijsonport" id="plugin_xsqueezedisplay_kodijsonport" value="[% prefs.plugin_xsqueezedisplay_kodijsonport %]" size="6">
-	[% END %]
-	[% WRAPPER setting title="PLUGIN_XSQUEEZEDISPLAY_KODIJSONUSER" desc="PLUGIN_XSQUEEZEDISPLAY_KODIJSONUSER_DESC" %]
-		<input type="text" class="stdedit" name="plugin_xsqueezedisplay_kodijsonuser" id="plugin_xsqueezedisplay_kodijsonuser" value="[% prefs.plugin_xsqueezedisplay_kodijsonuser %]" size="30">
-	[% END %]
-	[% WRAPPER setting title="PLUGIN_XSQUEEZEDISPLAY_KODIJSONPASSWORD" desc="PLUGIN_XSQUEEZEDISPLAY_KODIJSONPASSWORD_DESC" %]
-		<input type="text" class="stdedit" name="plugin_xsqueezedisplay_kodijsonpassword" id="plugin_xsqueezedisplay_kodijsonpassword" value="[% prefs.plugin_xsqueezedisplay_kodijsonpassword %]" size="30">
-	[% END %]
+    [% WRAPPER setting title="PLUGIN_XSQUEEZEDISPLAY_KODIIP" desc="PLUGIN_XSQUEEZEDISPLAY_KODIIP_DESC" %]
+        <input type="text" class="stdedit" name="plugin_xsqueezedisplay_kodiip" id="plugin_xsqueezedisplay_kodiip" value="[% prefs.plugin_xsqueezedisplay_kodiip %]" size="40">
+    [% END %]
+    [% WRAPPER setting title="PLUGIN_XSQUEEZEDISPLAY_KODIJSONPORT" desc="PLUGIN_XSQUEEZEDISPLAY_KODIJSONPORT_DESC" %]
+        <input type="text" class="stdedit" name="plugin_xsqueezedisplay_kodijsonport" id="plugin_xsqueezedisplay_kodijsonport" value="[% prefs.plugin_xsqueezedisplay_kodijsonport %]" size="6">
+    [% END %]
+    [% WRAPPER setting title="PLUGIN_XSQUEEZEDISPLAY_KODIJSONUSER" desc="PLUGIN_XSQUEEZEDISPLAY_KODIJSONUSER_DESC" %]
+        <input type="text" class="stdedit" name="plugin_xsqueezedisplay_kodijsonuser" id="plugin_xsqueezedisplay_kodijsonuser" value="[% prefs.plugin_xsqueezedisplay_kodijsonuser %]" size="30">
+    [% END %]
+    [% WRAPPER setting title="PLUGIN_XSQUEEZEDISPLAY_KODIJSONPASSWORD" desc="PLUGIN_XSQUEEZEDISPLAY_KODIJSONPASSWORD_DESC" %]
+        <input type="text" class="stdedit" name="plugin_xsqueezedisplay_kodijsonpassword" id="plugin_xsqueezedisplay_kodijsonpassword" value="[% prefs.plugin_xsqueezedisplay_kodijsonpassword %]" size="30">
+    [% END %]
 
-	<p>Enter what you want displayed on your Squeezebox lines during playback.</p>
-	<p>Note if multiple players are operating (e.g. you have music on during a slideshow), you will only get info from the highest priority player.  The order of priority is Video, Picture, Audio.</p>
-	<p>The following tokens will be replaced by values (if available, otherwise null strings):
-		<pre><code>
-		my %tokens  = 	
-				(   "[current_date]", "",
-					"[current_time]", "",
-					"[duration]", "",		#presented in HH:MM:SS
-					"[totaltime]", "",		#same as duration
-					"[time]", "",			#presented in HH:MM:SS
-					"[time_remaining]", "",	#calculated from duration - total time
-					"[percentage]", "",		
-					"[title]", "",
-					"[album]", "",
-					"[artist]", "",
-					"[season]", "", 
-					"[episode]", "",
-					"[showtitle]", "",
-					"[tvshowid]", "",
-					"[thumbnail]", "",
-					"[file]", "",
-					"[fanart]", "",
-					"[streamdetails_audio_channels]", "",
-					"[streamdetails_audio_codec]", "",
-					"[streamdetails_audio_language]", "",
-					"[streamdetails_subtile]", "",
-					"[streamdetails_video_aspect]", "",
-					"[streamdetails_video_codec]", "",
-					"[streamdetails_video_height]", "",
-					"[streamdetails_video_width]", "",
-					"[streamdetails_video_stereomode]", "",
-					"[type]", "",
-					"[resume]", ""
-				);
-		</pre></code>
-	</p>
+    <p>Enter what you want displayed on your Squeezebox lines during playback.</p>
+    <p>Note if multiple players are operating (e.g. you have music on during a slideshow), you will only get info from the highest priority player.  The order of priority is Video, Picture, Audio.</p>
 
-	[% WRAPPER setting title="PLUGIN_XSQUEEZEDISPLAY_LINE1_VIDEO" desc="PLUGIN_XSQUEEZEDISPLAY_LINE1_VIDEO_DESC" %]
-		<input type="text" class="stdedit" name="plugin_xsqueezedisplay_line1_video" id="plugin_xsqueezedisplay_line1_video" value="[% prefs.plugin_xsqueezedisplay_line1_video %]" size="60">
-	[% END %]
-	[% WRAPPER setting title="PLUGIN_XSQUEEZEDISPLAY_LINE2_VIDEO" desc="PLUGIN_XSQUEEZEDISPLAY_LINE2_VIDEO_DESC" %]
-		<input type="text" class="stdedit" name="plugin_xsqueezedisplay_line2_video" id="plugin_xsqueezedisplay_line2_video" value="[% prefs.plugin_xsqueezedisplay_line2_video %]" size="60">
-	[% END %]
-	[% WRAPPER setting title="PLUGIN_XSQUEEZEDISPLAY_LINE1_PICTURE" desc="PLUGIN_XSQUEEZEDISPLAY_LINE1_PICTURE_DESC" %]
-		<input type="text" class="stdedit" name="plugin_xsqueezedisplay_line1_picture" id="plugin_xsqueezedisplay_line1_picture" value="[% prefs.plugin_xsqueezedisplay_line1_picture %]" size="60">
-	[% END %]
-	[% WRAPPER setting title="PLUGIN_XSQUEEZEDISPLAY_LINE2_PICTURE" desc="PLUGIN_XSQUEEZEDISPLAY_LINE2_PICTURE_DESC" %]
-		<input type="text" class="stdedit" name="plugin_xsqueezedisplay_line2_picture" id="plugin_xsqueezedisplay_line2_picture" value="[% prefs.plugin_xsqueezedisplay_line2_picture %]" size="60">
-	[% END %]
-	[% WRAPPER setting title="PLUGIN_XSQUEEZEDISPLAY_LINE1_AUDIO" desc="PLUGIN_XSQUEEZEDISPLAY_LINE1_AUDIO_DESC" %]
-		<input type="text" class="stdedit" name="plugin_xsqueezedisplay_line1_audio" id="plugin_xsqueezedisplay_line1_audio" value="[% prefs.plugin_xsqueezedisplay_line1_audio %]" size="60">
-	[% END %]
-	[% WRAPPER setting title="PLUGIN_XSQUEEZEDISPLAY_LINE2_AUDIO" desc="PLUGIN_XSQUEEZEDISPLAY_LINE2_AUDIO_DESC" %]
-		<input type="text" class="stdedit" name="plugin_xsqueezedisplay_line2_audio" id="plugin_xsqueezedisplay_line2_audio" value="[% prefs.plugin_xsqueezedisplay_line2_audio %]" size="60">
-	[% END %]
+    [% WRAPPER setting title="PLUGIN_XSQUEEZEDISPLAY_LINE1_VIDEO" desc="PLUGIN_XSQUEEZEDISPLAY_LINE1_VIDEO_DESC" %]
+        <input type="text" class="stdedit" name="plugin_xsqueezedisplay_line1_video" id="plugin_xsqueezedisplay_line1_video" value="[% prefs.plugin_xsqueezedisplay_line1_video %]" size="60">
+    [% END %]
+    [% WRAPPER setting title="PLUGIN_XSQUEEZEDISPLAY_LINE2_VIDEO" desc="PLUGIN_XSQUEEZEDISPLAY_LINE2_VIDEO_DESC" %]
+        <input type="text" class="stdedit" name="plugin_xsqueezedisplay_line2_video" id="plugin_xsqueezedisplay_line2_video" value="[% prefs.plugin_xsqueezedisplay_line2_video %]" size="60">
+    [% END %]
+    [% WRAPPER setting title="PLUGIN_XSQUEEZEDISPLAY_LINE1_PICTURE" desc="PLUGIN_XSQUEEZEDISPLAY_LINE1_PICTURE_DESC" %]
+        <input type="text" class="stdedit" name="plugin_xsqueezedisplay_line1_picture" id="plugin_xsqueezedisplay_line1_picture" value="[% prefs.plugin_xsqueezedisplay_line1_picture %]" size="60">
+    [% END %]
+    [% WRAPPER setting title="PLUGIN_XSQUEEZEDISPLAY_LINE2_PICTURE" desc="PLUGIN_XSQUEEZEDISPLAY_LINE2_PICTURE_DESC" %]
+        <input type="text" class="stdedit" name="plugin_xsqueezedisplay_line2_picture" id="plugin_xsqueezedisplay_line2_picture" value="[% prefs.plugin_xsqueezedisplay_line2_picture %]" size="60">
+    [% END %]
+    [% WRAPPER setting title="PLUGIN_XSQUEEZEDISPLAY_LINE1_AUDIO" desc="PLUGIN_XSQUEEZEDISPLAY_LINE1_AUDIO_DESC" %]
+        <input type="text" class="stdedit" name="plugin_xsqueezedisplay_line1_audio" id="plugin_xsqueezedisplay_line1_audio" value="[% prefs.plugin_xsqueezedisplay_line1_audio %]" size="60">
+    [% END %]
+    [% WRAPPER setting title="PLUGIN_XSQUEEZEDISPLAY_LINE2_AUDIO" desc="PLUGIN_XSQUEEZEDISPLAY_LINE2_AUDIO_DESC" %]
+        <input type="text" class="stdedit" name="plugin_xsqueezedisplay_line2_audio" id="plugin_xsqueezedisplay_line2_audio" value="[% prefs.plugin_xsqueezedisplay_line2_audio %]" size="60">
+    [% END %]
+
+<br>
+<p>Here's some sample output to give you an idea of the data coming back.  You'll see an entry like this in our LMS log each time you play a file on your kodi player (and this is my kids log, not mine!! ;) :</p>
+
+<pre><code>
+
+# Data is retrieved largely as is from kodi and with matching names.
+# All tokens used above must be surrounded by square brackets.
+# but you can do, e.g. '[-[time_remaining]]' to get '[-06:23]' for a time remaining counter 
+
+my %tokens  =   (   "[current_date]", "",                           #the date now (Uses your LMS format)
+                    "[current_time]", "",                           #the time now (Uses yoru LMS format)
+                    "[duration]", "",                               #presented in [HH:]MM:SS (hours not shown unless > 0)
+                    "[totaltime]", "",                              #same as duration
+                    "[time]", "",                                   #playback time presented in [HH:]MM:SS
+                    "[time_remaining]", "",                         #playback time remaining presented in [HH:]MM:SS
+                    "[percentage]", "",                             #playback percentage
+                    "[title]", "",                                  #title of currently playing item, episode/album title e.g. "It is what it is"
+                    "[season]", "",                                 #Season number e.g. 3
+                    "[episode]", "",                                #epsiode number e.g. 12
+                    "[showtitle]", "",                              #Show title e.g. 'The Lost Room'
+                    "[tvshowid]", "",                               #Probably not useful!
+                    "[thumbnail]", "",                              #URL for the thumbnail image
+                    "[file]", "",                                   #Path to the file (might change later to basename)
+                    "[fanart]", "",                                 #URL to fanart
+                    "[album]", "",                                  #If audio playing, the album name
+                    "[artist]", "",                                 #Comma separated lists of artists for album
+                    "[streamdetails_audio_channels]", "",           #Current selected audio, #of channels e.g. 2 for stereo
+                    "[streamdetails_audio_codec]", "",              #Audio codec e.g. mp3
+                    "[streamdetails_audio_language]", "",           #Language of selected audio, if available
+                    "[streamdetails_subtile]", "",                  #Subtitle details 
+                    "[streamdetails_video_aspect]", "",             #Aspect ratio of the currently playing video, to two decimals, e..g 1.78
+                    "[streamdetails_video_codec]", "",              #Codec of the video, e.g. h264
+                    "[streamdetails_video_height]", "",             #height in pixels of currently playing video
+                    "[streamdetails_video_width]", "",              #width in pixels of currently playing video
+                    "[streamdetails_video_stereomode]", "",         #Not sure?
+                    "[type]", ""                                    #E.g. 'episode'
+                );
+
+|title Lesson Zero
+|album 
+|artist 
+|showtitle My Little Pony: Friendship is Magic
+|season 2
+|episode 3
+|tvshowid 138
+|thumbnail image://nfs%3a%2f%2f192.168.1.51%2fOtherVideos%2fKids%20Stuff%2fMy%20Little%20Pony%20Friendship%20is%20Magic%2fSeason%2002%2fMy%20Little%20Pony%20Friendship%20is%20Magic%20-%20S02E03%20-%20Lesson%20Zero%20-%20720p%20WEB-DL.tbn/
+|file nfs://192.168.1.51/OtherVideos/Kids Stuff/My Little Pony Friendship is Magic/Season 02/My Little Pony Friendship is Magic - S02E03 - Lesson Zero - 720p WEB-DL.mkv
+|file_basename 
+|fanart image://nfs%3a%2f%2f192.168.1.51%2fOtherVideos%2fKids%20Stuff%2fMy%20Little%20Pony%20Friendship%20is%20Magic%2ffanart.jpg/
+|type episode
+|streamdetails_audio_channels 6
+|streamdetails_audio_codec ac3
+|streamdetails_audio_language eng
+|streamdetails_subtile 
+|streamdetails_video_aspect 1.78
+|streamdetails_video_codec h264
+|streamdetails_video_height 720
+|streamdetails_video_width 1280
+|streamdetails_video_stereomode 
+
+|duration 22:04
+|time 13:11
+|time_remaining 08:53
+|percentage 59
+
+</pre></code>
+
 
 [% PROCESS settings/footer.html %]
 
