@@ -17,7 +17,6 @@ use Slim::Utils::Strings qw (string);
 use Slim::Utils::Prefs;
 use Slim::Utils::Log;
 use LWP::UserAgent;
-use POSIX qw(strftime);
 use JSON::XS;
 
 use constant CONNECTION_ATTEMPTS_BEFORE_SLEEP => 2;
@@ -408,10 +407,8 @@ sub screensaverXSqueezeDisplayLines {
 	#OK NOW GATHER ALL THE POSSIBLE DATA TO RETURN
 
 	#NON KODI DATA
-	$tokens{'[current_date]'} = strftime "%A, %B %e, %Y", localtime;
-	$tokens{'[current_time]'} = strftime "%I:%M %p", localtime;
-	#strip leading 0
-	$tokens{'[current_time]'} =~ s/^0+//;
+	$tokens{'[current_date]'} = Slim::Utils::DateTime::longDateF(time);
+	$tokens{'[current_time]'} = Slim::Utils::DateTime::timeF(time);
 
 	#KODI DATA
 
