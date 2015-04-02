@@ -1,4 +1,8 @@
 [% PROCESS settings/header.html %]
+	<br>
+	<p>
+	These are the settings needed to connect to Kodi.  See the Kodi wiki on <a href="http://kodi.wiki/view/Webserver">Kodi Web Server</a> for details
+	</p>
 
 	[% WRAPPER setting title="PLUGIN_XSQUEEZEDISPLAY_KODIIP" desc="PLUGIN_XSQUEEZEDISPLAY_KODIIP_DESC" %]
 		<input type="text" class="stdedit" name="plugin_xsqueezedisplay_kodiip" id="plugin_xsqueezedisplay_kodiip" value="[% prefs.plugin_xsqueezedisplay_kodiip %]" size="40">
@@ -12,11 +16,61 @@
 	[% WRAPPER setting title="PLUGIN_XSQUEEZEDISPLAY_KODIJSONPASSWORD" desc="PLUGIN_XSQUEEZEDISPLAY_KODIJSONPASSWORD_DESC" %]
 		<input type="text" class="stdedit" name="plugin_xsqueezedisplay_kodijsonpassword" id="plugin_xsqueezedisplay_kodijsonpassword" value="[% prefs.plugin_xsqueezedisplay_kodijsonpassword %]" size="30">
 	[% END %]
-	[% WRAPPER setting title="PLUGIN_XSQUEEZEDISPLAY_LINE1" desc="PLUGIN_XSQUEEZEDISPLAY_LINE1_DESC" %]
-		<input type="text" class="stdedit" name="plugin_xsqueezedisplay_line1" id="plugin_xsqueezedisplay_line1" value="[% prefs.plugin_xsqueezedisplay_line1 %]" size="60">
+
+	<p>Enter what you want displayed on your Squeezebox lines during playback.</p>
+	<p>Note if multiple players are operating (e.g. you have music on during a slideshow), you will only get info from the highest priority player.  The order of priority is Video, Picture, Audio.</p>
+	<p>The following tokens will be replaced by values (if available, otherwise null strings):
+		<pre><code>
+		my %tokens  = 	
+				(   "[current_date]", "",
+					"[current_time]", "",
+					"[duration]", "",		#presented in HH:MM:SS
+					"[totaltime]", "",		#same as duration
+					"[time]", "",			#presented in HH:MM:SS
+					"[time_remaining]", "",	#calculated from duration - total time
+					"[percentage]", "",		
+					"[title]", "",
+					"[album]", "",
+					"[artist]", "",
+					"[season]", "", 
+					"[episode]", "",
+					"[showtitle]", "",
+					"[tvshowid]", "",
+					"[thumbnail]", "",
+					"[file]", "",
+					"[fanart]", "",
+					"[streamdetails_audio_channels]", "",
+					"[streamdetails_audio_codec]", "",
+					"[streamdetails_audio_language]", "",
+					"[streamdetails_subtile]", "",
+					"[streamdetails_video_aspect]", "",
+					"[streamdetails_video_codec]", "",
+					"[streamdetails_video_height]", "",
+					"[streamdetails_video_width]", "",
+					"[streamdetails_video_stereomode]", "",
+					"[type]", "",
+					"[resume]", ""
+				);
+		</pre></code>
+	</p>
+
+	[% WRAPPER setting title="PLUGIN_XSQUEEZEDISPLAY_LINE1_VIDEO" desc="PLUGIN_XSQUEEZEDISPLAY_LINE1_VIDEO_DESC" %]
+		<input type="text" class="stdedit" name="plugin_xsqueezedisplay_line1_video" id="plugin_xsqueezedisplay_line1_video" value="[% prefs.plugin_xsqueezedisplay_line1_video %]" size="60">
 	[% END %]
-	[% WRAPPER setting title="PLUGIN_XSQUEEZEDISPLAY_LINE2" desc="PLUGIN_XSQUEEZEDISPLAY_LINE2_DESC" %]
-		<input type="text" class="stdedit" name="plugin_xsqueezedisplay_line2" id="plugin_xsqueezedisplay_line2" value="[% prefs.plugin_xsqueezedisplay_line2 %]" size="60">
+	[% WRAPPER setting title="PLUGIN_XSQUEEZEDISPLAY_LINE2_VIDEO" desc="PLUGIN_XSQUEEZEDISPLAY_LINE2_VIDEO_DESC" %]
+		<input type="text" class="stdedit" name="plugin_xsqueezedisplay_line2_video" id="plugin_xsqueezedisplay_line2_video" value="[% prefs.plugin_xsqueezedisplay_line2_video %]" size="60">
+	[% END %]
+	[% WRAPPER setting title="PLUGIN_XSQUEEZEDISPLAY_LINE1_PICTURE" desc="PLUGIN_XSQUEEZEDISPLAY_LINE1_PICTURE_DESC" %]
+		<input type="text" class="stdedit" name="plugin_xsqueezedisplay_line1_picture" id="plugin_xsqueezedisplay_line1_picture" value="[% prefs.plugin_xsqueezedisplay_line1_picture %]" size="60">
+	[% END %]
+	[% WRAPPER setting title="PLUGIN_XSQUEEZEDISPLAY_LINE2_PICTURE" desc="PLUGIN_XSQUEEZEDISPLAY_LINE2_PICTURE_DESC" %]
+		<input type="text" class="stdedit" name="plugin_xsqueezedisplay_line2_picture" id="plugin_xsqueezedisplay_line2_picture" value="[% prefs.plugin_xsqueezedisplay_line2_picture %]" size="60">
+	[% END %]
+	[% WRAPPER setting title="PLUGIN_XSQUEEZEDISPLAY_LINE1_AUDIO" desc="PLUGIN_XSQUEEZEDISPLAY_LINE1_AUDIO_DESC" %]
+		<input type="text" class="stdedit" name="plugin_xsqueezedisplay_line1_audio" id="plugin_xsqueezedisplay_line1_audio" value="[% prefs.plugin_xsqueezedisplay_line1_audio %]" size="60">
+	[% END %]
+	[% WRAPPER setting title="PLUGIN_XSQUEEZEDISPLAY_LINE2_AUDIO" desc="PLUGIN_XSQUEEZEDISPLAY_LINE2_AUDIO_DESC" %]
+		<input type="text" class="stdedit" name="plugin_xsqueezedisplay_line2_audio" id="plugin_xsqueezedisplay_line2_audio" value="[% prefs.plugin_xsqueezedisplay_line2_audio %]" size="60">
 	[% END %]
 
 [% PROCESS settings/footer.html %]

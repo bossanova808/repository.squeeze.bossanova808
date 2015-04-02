@@ -33,11 +33,23 @@ sub new {
 	if (!defined $prefs->get('plugin_xsqueezedisplay_kodijsonpassword')) {
 		$prefs->set('plugin_xsqueezedisplay_kodijsonpassword', '');
 	}
-	if (!defined $prefs->get('plugin_xsqueezedisplay_line1')) {
-		$prefs->set('plugin_xsqueezedisplay_line1', '');
+	if (!defined $prefs->get('plugin_xsqueezedisplay_line1_video')) {
+		$prefs->set('plugin_xsqueezedisplay_line1_video', '');
 	}
-	if (!defined $prefs->get('plugin_xsqueezedisplay_line2')) {
-		$prefs->set('plugin_xsqueezedisplay_line2', '');
+	if (!defined $prefs->get('plugin_xsqueezedisplay_line2_video')) {
+		$prefs->set('plugin_xsqueezedisplay_line2_video', '');
+	}
+	if (!defined $prefs->get('plugin_xsqueezedisplay_line1_picture')) {
+		$prefs->set('plugin_xsqueezedisplay_line1_picture', '');
+	}
+	if (!defined $prefs->get('plugin_xsqueezedisplay_line2_picture')) {
+		$prefs->set('plugin_xsqueezedisplay_line2_picture', '');
+	}
+	if (!defined $prefs->get('plugin_xsqueezedisplay_line1_audio')) {
+		$prefs->set('plugin_xsqueezedisplay_line1_audio', '');
+	}
+	if (!defined $prefs->get('plugin_xsqueezedisplay_line2_audio')) {
+		$prefs->set('plugin_xsqueezedisplay_line2_audio', '');
 	}
 
 	return $class->SUPER::new();
@@ -52,7 +64,7 @@ sub page {
 }
 
 sub prefs {
-	return ($prefs, qw(plugin_xsqueezedisplay_kodiip plugin_xsqueezedisplay_kodijsonport plugin_xsqueezedisplay_kodijsonuser plugin_xsqueezedisplay_kodijsonpassword plugin_xsqueezedisplay_line1 plugin_xsqueezedisplay_line2));
+	return ($prefs, qw(plugin_xsqueezedisplay_kodiip plugin_xsqueezedisplay_kodijsonport plugin_xsqueezedisplay_kodijsonuser plugin_xsqueezedisplay_kodijsonpassword plugin_xsqueezedisplay_line1_video plugin_xsqueezedisplay_line2_video plugin_xsqueezedisplay_line1_picture plugin_xsqueezedisplay_line2_picture plugin_xsqueezedisplay_line1_audio plugin_xsqueezedisplay_line2_audio));
 }
 
 1;

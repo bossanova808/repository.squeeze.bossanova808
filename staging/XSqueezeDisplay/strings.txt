@@ -28,14 +28,38 @@ PLUGIN_XSQUEEZEDISPLAY_KODIJSONPASSWORD
 PLUGIN_XSQUEEZEDISPLAY_KODIJSONPASSWORD_DESC
 	EN	Enter the password for the KODI JSON interface
 
-PLUGIN_XSQUEEZEDISPLAY_LINE1
-	EN	Template for line1 NOT YET USED
+PLUGIN_XSQUEEZEDISPLAY_LINE1_VIDEO
+	EN	Template for line 1 (video playback)
 
-PLUGIN_XSQUEEZEDISPLAY_LINE1_DESC
-	EN	Enter the template for the data you want displayed on line1 (not visible if font size is the biggest)
+PLUGIN_XSQUEEZEDISPLAY_LINE1_VIDEO_DESC
+	EN	Enter the template for the data you want displayed on line 1 during video playback (not visible if font size is the biggest)
 
-PLUGIN_XSQUEEZEDISPLAY_LINE2
-	EN	Template for line2 NOT YET USED
+PLUGIN_XSQUEEZEDISPLAY_LINE2_VIDEO
+	EN	Template for line 2 (video playback)
 
-PLUGIN_XSQUEEZEDISPLAY_LINE2_DESC
-	EN	Enter the template for the data you want displayed on line2 (this is the only line you'll see if font size is the biggest)
+PLUGIN_XSQUEEZEDISPLAY_LINE2_VIDEO_DESC
+	EN	Enter the template for the data you want displayed on line 2 during video playback (not visible if font size is the biggest)
+
+PLUGIN_XSQUEEZEDISPLAY_LINE1_PICTURE
+	EN	Template for line 1 (picture playback)
+
+PLUGIN_XSQUEEZEDISPLAY_LINE1_PICTURE_DESC
+	EN	Enter the template for the data you want displayed on line 1 during picture playback (not visible if font size is the biggest)
+
+PLUGIN_XSQUEEZEDISPLAY_LINE2_PICTURE
+	EN	Template for line 2 (picture playback)
+
+PLUGIN_XSQUEEZEDISPLAY_LINE2_PICTURE_DESC
+	EN	Enter the template for the data you want displayed on line 2 during picture playback (not visible if font size is the biggest)
+
+PLUGIN_XSQUEEZEDISPLAY_LINE1_AUDIO
+	EN	Template for line 1 (audio playback)
+
+PLUGIN_XSQUEEZEDISPLAY_LINE1_AUDIO_DESC
+	EN	Enter the template for the data you want displayed on line 1 during audio playback (not visible if font size is the biggest)
+
+PLUGIN_XSQUEEZEDISPLAY_LINE2_AUDIO
+	EN	Template for line 2 (audio playback)
+
+PLUGIN_XSQUEEZEDISPLAY_LINE2_AUDIO_DESC
+	EN	Enter the template for the data you want displayed on line 2 during audio playback (not visible if font size is the biggest)

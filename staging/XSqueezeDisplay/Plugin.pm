@@ -38,34 +38,34 @@ my $prefs = preferences('plugin.xsqueezedisplay');
 my ($delay, $lines, $line1, $line2, $server_endpoint, $state, $failed_connects, $retry_timer);
 
 # Playing properties
-my %tokens  = 	(   "current_date", "",
-					"current_time", "",
-					"duration", "",		#presented in HH:MM:SS
-					"totaltime", "",		#same as duration
-					"time", "",				#presented in HH:MM:SS
-					"time_remaining", "",	#calculated from duration - total time
-					"percentage", "",		
-					"title", "",
-					"album", "",
-					"artist", "",
-					"season", "", 
-					"episode", "",
-					"showtitle", "",
-					"tvshowid", "",
-					"thumbnail", "",
-					"file", "",
-					"fanart", "",
-					"streamdetails_audio_channels", "",
-					"streamdetails_audio_codec", "",
-					"streamdetails_audio_language", "",
-					"streamdetails_subtile", "",
-					"streamdetails_video_aspect", "",
-					"streamdetails_video_codec", "",
-					"streamdetails_video_height", "",
-					"streamdetails_video_width", "",
-					"streamdetails_video_stereomode", "",
-					"type", "",
-					"resume", ""
+my %tokens  = 	(   "[current_date]", "",
+					"[current_time]", "",
+					"[duration]", "",		#presented in HH:MM:SS
+					"[totaltime]", "",		#same as duration
+					"[time]", "",				#presented in HH:MM:SS
+					"[time_remaining]", "",	#calculated from duration - total time
+					"[percentage]", "",		
+					"[title]", "",
+					"[album]", "",
+					"[artist]", "",
+					"[season]", "", 
+					"[episode]", "",
+					"[showtitle]", "",
+					"[tvshowid]", "",
+					"[thumbnail]", "",
+					"[file]", "",
+					"[fanart]", "",
+					"[streamdetails_audio_channels]", "",
+					"[streamdetails_audio_codec]", "",
+					"[streamdetails_audio_language]", "",
+					"[streamdetails_subtile]", "",
+					"[streamdetails_video_aspect]", "",
+					"[streamdetails_video_codec]", "",
+					"[streamdetails_video_height]", "",
+					"[streamdetails_video_width]", "",
+					"[streamdetails_video_stereomode]", "",
+					"[type]", "",
+					"[resume]", ""
 				);
 
 # Audio properties
@@ -154,8 +154,8 @@ sub setScreenSaverMode {
 }
 
 sub defaultDisplay {
-	$line1 = $tokens{'current_date'};
-	$line2 = $tokens{'current_time'};
+	$line1 = $tokens{'[current_date]'};
+	$line2 = $tokens{'[current_time]'};
 }
 
 sub kodiJSON {
@@ -202,10 +202,10 @@ sub format_time{
 	my $seconds = $seconds%60;
 
 	if ($hours != 0){
-		return sprintf("-%02d:%02d:%02d", $hours, $minutes, $seconds);
+		return sprintf("%02d:%02d:%02d", $hours, $minutes, $seconds);
 	}
 	else {
-		return sprintf("-%02d:%02d", $minutes, $seconds);
+		return sprintf("%02d:%02d", $minutes, $seconds);
 	}
 }
 
@@ -234,24 +234,24 @@ sub getPlayingProgress {
 		my $message = decode_json $resp->decoded_content;
 
 		my $duration_in_seconds = ($message->{'result'}{'totaltime'}{'hours'} * 60 * 60) + ($message->{'result'}{'totaltime'}{'minutes'} * 60) + $message->{'result'}{'totaltime'}{'seconds'};
-		$tokens{'duration'} = format_time($duration_in_seconds);
-		$tokens{'totaltime'} = $tokens{'duration'};
+		$tokens{'[duration]'} = format_time($duration_in_seconds);
+		$tokens{'[totaltime]'} = $tokens{'[duration]'};
 
 		my $elapsed_in_seconds = ($message->{'result'}{'time'}{'hours'} * 60 * 60) + ($message->{'result'}{'time'}{'minutes'} * 60) + $message->{'result'}{'time'}{'seconds'};
-		$tokens{'time'} = format_time($elapsed_in_seconds);
+		$tokens{'[time]'} = format_time($elapsed_in_seconds);
 
 		my $difference_in_seconds = $duration_in_seconds - $elapsed_in_seconds;
-		$tokens{'time_remaining'} = format_time($difference_in_seconds);
+		$tokens{'[time_remaining]'} = format_time($difference_in_seconds);
 
-		$tokens{'percentage'} = $message->{'result'}{'percentage'};
+		$tokens{'[percentage]'} = $message->{'result'}{'percentage'};
 
 		myDebug ("\n"											.
 				 "\n|duration_in_seconds " 						.$duration_in_seconds.
-				 "\n|duration "									.$tokens{'duration'}.
+				 "\n|duration "									.$tokens{'[duration]'}.
 				 "\n|elapsed_in_seconds " 						.$elapsed_in_seconds.
-				 "\n|time " 									.$tokens{'time'}.
-				 "\n|time_remaining " 							.$tokens{'time_remaining'}.
-				 "\n|percentage " 								.$tokens{'percentage'}.
+				 "\n|time " 									.$tokens{'[time]'}.
+				 "\n|time_remaining " 							.$tokens{'[time_remaining]'}.
+				 "\n|percentage " 								.$tokens{'[percentage]'}.
 				 "\n");
 
 	}
@@ -330,56 +330,68 @@ sub getExtendedNowPlaying {
 		#myDebug($resp->decoded_content);
 		my $message = decode_json $resp->decoded_content;
 
-		$tokens{'title'} 				= $message->{'result'}{'item'}{'title'};
-		$tokens{'album'}				= $message->{'result'}{'item'}{'album'};
-		$tokens{'artist'} 				= $message->{'result'}{'item'}{'artist'}->[0]; #array of artists it seems
-		$tokens{'showtitle'} 			= $message->{'result'}{'item'}{'showtitle'};
-		$tokens{'season'} 				= $message->{'result'}{'item'}{'season'};
-		$tokens{'episode'} 				= $message->{'result'}{'item'}{'episode'};
-		$tokens{'tvshowid'} 			= $message->{'result'}{'item'}{'tvshowid'};
-		$tokens{'thumbnail'} 			= $message->{'result'}{'item'}{'thumbnail'};
-		$tokens{'file'} 				= $message->{'result'}{'item'}{'file'};
-		$tokens{'fanart'} 				= $message->{'result'}{'item'}{'fanart'};
-		$tokens{'type'}               	= $message->{'result'}{'item'}{'type'};
+		$tokens{'[title]'} 					= $message->{'result'}{'item'}{'title'};
+		$tokens{'[album]'}					= $message->{'result'}{'item'}{'album'};
+		$tokens{'[artist]'} 				= $message->{'result'}{'item'}{'artist'}->[0]; #array of artists it seems
+		$tokens{'[showtitle]'} 				= $message->{'result'}{'item'}{'showtitle'};
+		$tokens{'[season]'} 				= $message->{'result'}{'item'}{'season'};
+		$tokens{'[episode]'} 				= $message->{'result'}{'item'}{'episode'};
+		$tokens{'[tvshowid]'} 				= $message->{'result'}{'item'}{'tvshowid'};
+		$tokens{'[thumbnail]'} 				= $message->{'result'}{'item'}{'thumbnail'};
+		$tokens{'[file]'} 					= $message->{'result'}{'item'}{'file'};
+		$tokens{'[fanart]'} 				= $message->{'result'}{'item'}{'fanart'};
+		$tokens{'[type]'}               	= $message->{'result'}{'item'}{'type'};
 		#audio details
-		$tokens{'streamdetails_audio_channels'} 			= $message->{'result'}{'item'}{'streamdetails'}{'audio'}->[0]->{'channels'};
-		$tokens{'streamdetails_audio_codec'} 				= $message->{'result'}{'item'}{'streamdetails'}{'audio'}->[0]->{'codec'};
-		$tokens{'streamdetails_audio_language'} 			= $message->{'result'}{'item'}{'streamdetails'}{'audio'}->[0]->{'language'};
+		$tokens{'[streamdetails_audio_channels]'} 				= $message->{'result'}{'item'}{'streamdetails'}{'audio'}->[0]->{'channels'};
+		$tokens{'[streamdetails_audio_codec]'} 					= $message->{'result'}{'item'}{'streamdetails'}{'audio'}->[0]->{'codec'};
+		$tokens{'[streamdetails_audio_language]'} 				= $message->{'result'}{'item'}{'streamdetails'}{'audio'}->[0]->{'language'};
 		#array of subtitles
-		$tokens{'streamdetails_subtile'} 					= $message->{'result'}{'item'}{'streamdetails'}{'subtitle'}->[0];
+		$tokens{'[streamdetails_subtile]'} 						= $message->{'result'}{'item'}{'streamdetails'}{'subtitle'}->[0];
 		#video details
-		$tokens{'streamdetails_video_aspect'} 				= $message->{'result'}{'item'}{'streamdetails'}{'video'}->[0]->{'aspect'};
-		$tokens{'streamdetails_video_codec'} 				= $message->{'result'}{'item'}{'streamdetails'}{'video'}->[0]->{'codec'};
-		$tokens{'streamdetails_video_height'} 				= $message->{'result'}{'item'}{'streamdetails'}{'video'}->[0]->{'height'};
-		$tokens{'streamdetails_video_width'} 				= $message->{'result'}{'item'}{'streamdetails'}{'video'}->[0]->{'width'};
-		$tokens{'streamdetails_video_stereomode'} 			= $message->{'result'}{'item'}{'streamdetails'}{'video'}->[0]->{'stereomode'};
+		$tokens{'[streamdetails_video_aspect]'} 				= $message->{'result'}{'item'}{'streamdetails'}{'video'}->[0]->{'aspect'};
+		$tokens{'[streamdetails_video_codec]'} 					= $message->{'result'}{'item'}{'streamdetails'}{'video'}->[0]->{'codec'};
+		$tokens{'[streamdetails_video_height]'} 				= $message->{'result'}{'item'}{'streamdetails'}{'video'}->[0]->{'height'};
+		$tokens{'[streamdetails_video_width]'} 					= $message->{'result'}{'item'}{'streamdetails'}{'video'}->[0]->{'width'};
+		$tokens{'[streamdetails_video_stereomode]'} 			= $message->{'result'}{'item'}{'streamdetails'}{'video'}->[0]->{'stereomode'};
 
 		myDebug ("\n"											.
-				 "\n|title " 									.$tokens{'title'}.
-				 "\n|album "									.$tokens{'album'}.
-				 "\n|artist " 									.$tokens{'artist'}.
-				 "\n|showtitle " 								.$tokens{'showtitle'}.
-				 "\n|season "  									.$tokens{'season'}.  
-				 "\n|episode " 									.$tokens{'episode'}.
-				 "\n|tvshowid "									.$tokens{'tvshowid'}.
-				 "\n|thumbnail "								.$tokens{'thumbnail'}.
-				 "\n|file " 									.$tokens{'file'}.
-				 "\n|file_basename " 							.$tokens{'file_basename'}.
-				 "\n|fanart "									.$tokens{'fanart'}. 
-				 "\n|type "										.$tokens{'type'}. 
-				 "\n|streamdetails_audio_channels "				.$tokens{'streamdetails_audio_channels'}. 
-				 "\n|streamdetails_audio_codec "				.$tokens{'streamdetails_audio_codec'}. 
-				 "\n|streamdetails_audio_language "				.$tokens{'streamdetails_audio_language'}. 
-				 "\n|streamdetails_subtile "					.$tokens{'streamdetails_subtile'}. 
-				 "\n|streamdetails_video_aspect "				.$tokens{'streamdetails_video_aspect'}. 
-				 "\n|streamdetails_video_codec "				.$tokens{'streamdetails_video_codec'}. 
-				 "\n|streamdetails_video_height "				.$tokens{'streamdetails_video_height'}. 
-				 "\n|streamdetails_video_width "				.$tokens{'streamdetails_video_width'}. 
-				 "\n|streamdetails_video_stereomode "			.$tokens{'streamdetails_video_stereomode'}. 
+				 "\n|title " 									.$tokens{'[title]'}.
+				 "\n|album "									.$tokens{'[album]'}.
+				 "\n|artist " 									.$tokens{'[artist]'}.
+				 "\n|showtitle " 								.$tokens{'[showtitle]'}.
+				 "\n|season "  									.$tokens{'[season]'}.  
+				 "\n|episode " 									.$tokens{'[episode]'}.
+				 "\n|tvshowid "									.$tokens{'[tvshowid]'}.
+				 "\n|thumbnail "								.$tokens{'[thumbnail]'}.
+				 "\n|file " 									.$tokens{'[file]'}.
+				 "\n|file_basename " 							.$tokens{'[file_basename]'}.
+				 "\n|fanart "									.$tokens{'[fanart]'}. 
+				 "\n|type "										.$tokens{'[type]'}. 
+				 "\n|streamdetails_audio_channels "				.$tokens{'[streamdetails_audio_channels]'}. 
+				 "\n|streamdetails_audio_codec "				.$tokens{'[streamdetails_audio_codec]'}. 
+				 "\n|streamdetails_audio_language "				.$tokens{'[streamdetails_audio_language]'}. 
+				 "\n|streamdetails_subtile "					.$tokens{'[streamdetails_subtile]'}. 
+				 "\n|streamdetails_video_aspect "				.$tokens{'[streamdetails_video_aspect]'}. 
+				 "\n|streamdetails_video_codec "				.$tokens{'[streamdetails_video_codec]'}. 
+				 "\n|streamdetails_video_height "				.$tokens{'[streamdetails_video_height]'}. 
+				 "\n|streamdetails_video_width "				.$tokens{'[streamdetails_video_width]'}. 
+				 "\n|streamdetails_video_stereomode "			.$tokens{'[streamdetails_video_stereomode]'}. 
 				 "\n");
 
 	}
 
+
+}
+
+sub token_swap{
+	my $template = shift;
+
+	while ((my $find, my $replace) = each(%tokens)){
+		#myDebug("\n Template [".$template."] find [".$find."] replace [".$replace."]");
+		$template =~ s/\Q$find\E/$replace/g;
+	}
+	#myDebug("\n Template [".$template."]");
+	return $template;
 
 }
 
@@ -396,10 +408,10 @@ sub screensaverXSqueezeDisplayLines {
 	#OK NOW GATHER ALL THE POSSIBLE DATA TO RETURN
 
 	#NON KODI DATA
-	$tokens{'current_date'} = strftime "%A, %B %e, %Y", localtime;
-	$tokens{'current_time'} = strftime "%I:%M %p", localtime;
+	$tokens{'[current_date]'} = strftime "%A, %B %e, %Y", localtime;
+	$tokens{'[current_time]'} = strftime "%I:%M %p", localtime;
 	#strip leading 0
-	$tokens{'current_time'} =~ s/^0+//;
+	$tokens{'[current_time]'} =~ s/^0+//;
 
 	#KODI DATA
 
@@ -452,8 +464,11 @@ sub screensaverXSqueezeDisplayLines {
 				    	#always get the current timers
 				    	getPlayingProgress($player->{'playerid'});
 
-						$line1 = $state;
-						$line2 = $tokens{'current_time'} . "   [" . $tokens{'time_remaining'} . "]";
+				    	#now pre the lines by swapping all tokens for values
+
+						$line1 = token_swap($prefs->get('plugin_xsqueezedisplay_line1_video'));
+						$line2 = token_swap($prefs->get('plugin_xsqueezedisplay_line2_video'));
+
 				    } #player == video	
 				} # foreach $player
 			} #there was a result in the json
