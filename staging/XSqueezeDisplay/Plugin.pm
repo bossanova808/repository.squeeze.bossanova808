@@ -22,6 +22,8 @@ use JSON::XS;
 
 use constant CONNECTION_ATTEMPTS_BEFORE_SLEEP => 2;
 use constant SLEEP_PERIOD => 10;
+use constant NOT_PLAYING => 0;
+use constant PLAYING => 1;
 
 my $ua = LWP::UserAgent->new;
 
@@ -33,27 +35,38 @@ my $log = Slim::Utils::Log->addLogCategory({
 
 my $prefs = preferences('plugin.xsqueezedisplay');
 
-my ($delay, $lines, $line1, $line2, $server_endpoint, $state, $timeRemaining, $failed_connects, $retry_timer);
+my ($delay, $lines, $line1, $line2, $server_endpoint, $state, $failed_connects, $retry_timer);
 
-
-# Video properties
-my ($duration,
-	$totaltime, 
-	$time, 
-	$time_remaining, 
-	$percentage, 
-	$title, 
-	$album, 
-	$artist, 
-	$season, 
-	$episode, 
-	$showtitle, 
-	$tvshowid, 
-	$thumbnail, 
-	$file, 
-	$fanart, 
-	$streamdetails, 
-	$resume);
+# Playing properties
+my %tokens  = 	(   "current_date", "",
+					"current_time", "",
+					"duration", "",		#presented in HH:MM:SS
+					"totaltime", "",		#same as duration
+					"time", "",				#presented in HH:MM:SS
+					"time_remaining", "",	#calculated from duration - total time
+					"percentage", "",		
+					"title", "",
+					"album", "",
+					"artist", "",
+					"season", "", 
+					"episode", "",
+					"showtitle", "",
+					"tvshowid", "",
+					"thumbnail", "",
+					"file", "",
+					"fanart", "",
+					"streamdetails_audio_channels", "",
+					"streamdetails_audio_codec", "",
+					"streamdetails_audio_language", "",
+					"streamdetails_subtile", "",
+					"streamdetails_video_aspect", "",
+					"streamdetails_video_codec", "",
+					"streamdetails_video_height", "",
+					"streamdetails_video_width", "",
+					"streamdetails_video_stereomode", "",
+					"type", "",
+					"resume", ""
+				);
 
 # Audio properties
 # Pictures properties
@@ -90,9 +103,8 @@ sub initPlugin {
 	else{
 		$server_endpoint = 'http://' . $prefs->get('plugin_xsqueezedisplay_kodijsonuser') . ':' . $prefs->get('plugin_xsqueezedisplay_kodijsonpassword') . '@' . $prefs->get('plugin_xsqueezedisplay_kodiip') . ':' . $prefs->get('plugin_xsqueezedisplay_kodijsonport') . '/jsonrpc';
 	}
-	myDebug(join("","Kodi endpoint is ", $server_endpoint));
-	$state = "Stopped";
-	$timeRemaining = "";
+	myDebug(join("","Kodi endpoint is ", $server_endpoint),"info");
+	$state = NOT_PLAYING;
 	$failed_connects = 0;
 	$retry_timer = SLEEP_PERIOD;
 }
@@ -141,6 +153,10 @@ sub setScreenSaverMode {
 	$client->lines(\&screensaverXSqueezeDisplayLines);
 }
 
+sub defaultDisplay {
+	$line1 = $tokens{'current_date'};
+	$line2 = $tokens{'current_time'};
+}
 
 sub kodiJSON {
 		my $post_data = shift;
@@ -168,8 +184,8 @@ sub kodiJSON {
 		else {
 			#only log errors other than can't connect...
 			if ($resp->code != 500){
-			    myDebug(join("JSON Request error code: 		", $resp->code, "\n"));
-			    myDebug(join("JSON Request error message: 	", $resp->message, "\n"));
+			    myDebug(join("JSON Request error code: 		", $resp->code, "\n"),"info");
+			    myDebug(join("JSON Request error message: 	", $resp->message, "\n"),"info");
 			}
 			return $resp;
 		}	
@@ -177,15 +193,215 @@ sub kodiJSON {
 	    
 }
 
+#Takes seconds and returns a formatted string of HH:MM:SS or MM:SS if the hours is 0.
+sub format_time{
+	my $seconds = shift;
+
+	my $hours = ($seconds/(60*60))%24;
+	my $minutes = ($seconds/60)%60;
+	my $seconds = $seconds%60;
+
+	if ($hours != 0){
+		return sprintf("-%02d:%02d:%02d", $hours, $minutes, $seconds);
+	}
+	else {
+		return sprintf("-%02d:%02d", $minutes, $seconds);
+	}
+}
+
+sub getPlayingProgress {
+
+	my $playerid = shift;
+
+	# Always get the play progress time 
+	my $post_data = '{
+	    "jsonrpc": "2.0",
+	    "method": "Player.GetProperties",
+	    "params": {
+	        "properties": [
+	            "percentage",
+	            "time",
+	            "totaltime"
+	        ],
+	        "playerid": '.$playerid.'
+	    },
+	    "id": 1
+	}';
+
+	my $resp = kodiJSON($post_data);						
+	
+	if ($resp->is_success) {
+		my $message = decode_json $resp->decoded_content;
+
+		my $duration_in_seconds = ($message->{'result'}{'totaltime'}{'hours'} * 60 * 60) + ($message->{'result'}{'totaltime'}{'minutes'} * 60) + $message->{'result'}{'totaltime'}{'seconds'};
+		$tokens{'duration'} = format_time($duration_in_seconds);
+		$tokens{'totaltime'} = $tokens{'duration'};
+
+		my $elapsed_in_seconds = ($message->{'result'}{'time'}{'hours'} * 60 * 60) + ($message->{'result'}{'time'}{'minutes'} * 60) + $message->{'result'}{'time'}{'seconds'};
+		$tokens{'time'} = format_time($elapsed_in_seconds);
+
+		my $difference_in_seconds = $duration_in_seconds - $elapsed_in_seconds;
+		$tokens{'time_remaining'} = format_time($difference_in_seconds);
+
+		$tokens{'percentage'} = $message->{'result'}{'percentage'};
+
+		myDebug ("\n"											.
+				 "\n|duration_in_seconds " 						.$duration_in_seconds.
+				 "\n|duration "									.$tokens{'duration'}.
+				 "\n|elapsed_in_seconds " 						.$elapsed_in_seconds.
+				 "\n|time " 									.$tokens{'time'}.
+				 "\n|time_remaining " 							.$tokens{'time_remaining'}.
+				 "\n|percentage " 								.$tokens{'percentage'}.
+				 "\n");
+
+	}
+
+}
+
+sub getExtendedNowPlaying {
+
+	my $playerid = shift;
+
+	my $post_data = '{
+		    "jsonrpc": "2.0",
+		    "method": "Player.GetItem",
+		    "params": {
+		        "properties":   [
+		        				"title", 
+		        				"album", 
+		        				"artist", 
+		        				"season", 
+		        				"episode", 
+		        				"duration", 
+		        				"showtitle", 
+		        				"tvshowid", 
+		        				"thumbnail", 
+		        				"file", 
+		        				"fanart", 
+		        				"streamdetails"
+		        				],
+		        "playerid": '.$playerid.'
+		    },
+		    "id": "VideoGetItem"
+		}';
+
+		# {
+		#     "id": "VideoGetItem",
+		#     "jsonrpc": "2.0",
+		#     "result": {
+		#         "item": {
+		#             "album": "",
+		#             "artist": [],
+		#             "episode": 14,
+		#             "fanart": "image://http%3a%2f%2fthetvdb.com%2fbanners%2ffanart%2foriginal%2f94551-11.jpg/",
+		#             "file": "Z:\\IT Documents\\Video Files\\TV\\Parenthood (2010)\\Season 03\\Parenthood S03E14.avi",
+		#             "id": 4,
+		#             "label": "It Is What It Is",
+		#             "season": 3,
+		#             "showtitle": "Parenthood (2010)",
+		#             "streamdetails": {
+		#                 "audio": [{
+		#                     "channels": 2,
+		#                     "codec": "mp3",
+		#                     "language": ""
+		#                 }],
+		#                 "subtitle": [],
+		#                 "video": [{
+		#                     "aspect": 1.7727270126342773,
+		#                     "codec": "xvid",
+		#                     "duration": 2562,
+		#                     "height": 352,
+		#                     "stereomode": "",
+		#                     "width": 624
+		#                 }]
+		#             },
+		#             "thumbnail": "image://http%3a%2f%2fthetvdb.com%2fbanners%2fepisodes%2f94551%2f4231536.jpg/",
+		#             "title": "It Is What It Is",
+		#             "tvshowid": 1,
+		#             "type": "episode"
+		#         }
+		#     }
+		# }
+
+
+	my $resp = kodiJSON($post_data);						
+	
+	if ($resp->is_success) {
+		#myDebug($resp->decoded_content);
+		my $message = decode_json $resp->decoded_content;
+
+		$tokens{'title'} 				= $message->{'result'}{'item'}{'title'};
+		$tokens{'album'}				= $message->{'result'}{'item'}{'album'};
+		$tokens{'artist'} 				= $message->{'result'}{'item'}{'artist'}->[0]; #array of artists it seems
+		$tokens{'showtitle'} 			= $message->{'result'}{'item'}{'showtitle'};
+		$tokens{'season'} 				= $message->{'result'}{'item'}{'season'};
+		$tokens{'episode'} 				= $message->{'result'}{'item'}{'episode'};
+		$tokens{'tvshowid'} 			= $message->{'result'}{'item'}{'tvshowid'};
+		$tokens{'thumbnail'} 			= $message->{'result'}{'item'}{'thumbnail'};
+		$tokens{'file'} 				= $message->{'result'}{'item'}{'file'};
+		$tokens{'fanart'} 				= $message->{'result'}{'item'}{'fanart'};
+		$tokens{'type'}               	= $message->{'result'}{'item'}{'type'};
+		#audio details
+		$tokens{'streamdetails_audio_channels'} 			= $message->{'result'}{'item'}{'streamdetails'}{'audio'}->[0]->{'channels'};
+		$tokens{'streamdetails_audio_codec'} 				= $message->{'result'}{'item'}{'streamdetails'}{'audio'}->[0]->{'codec'};
+		$tokens{'streamdetails_audio_language'} 			= $message->{'result'}{'item'}{'streamdetails'}{'audio'}->[0]->{'language'};
+		#array of subtitles
+		$tokens{'streamdetails_subtile'} 					= $message->{'result'}{'item'}{'streamdetails'}{'subtitle'}->[0];
+		#video details
+		$tokens{'streamdetails_video_aspect'} 				= $message->{'result'}{'item'}{'streamdetails'}{'video'}->[0]->{'aspect'};
+		$tokens{'streamdetails_video_codec'} 				= $message->{'result'}{'item'}{'streamdetails'}{'video'}->[0]->{'codec'};
+		$tokens{'streamdetails_video_height'} 				= $message->{'result'}{'item'}{'streamdetails'}{'video'}->[0]->{'height'};
+		$tokens{'streamdetails_video_width'} 				= $message->{'result'}{'item'}{'streamdetails'}{'video'}->[0]->{'width'};
+		$tokens{'streamdetails_video_stereomode'} 			= $message->{'result'}{'item'}{'streamdetails'}{'video'}->[0]->{'stereomode'};
+
+		myDebug ("\n"											.
+				 "\n|title " 									.$tokens{'title'}.
+				 "\n|album "									.$tokens{'album'}.
+				 "\n|artist " 									.$tokens{'artist'}.
+				 "\n|showtitle " 								.$tokens{'showtitle'}.
+				 "\n|season "  									.$tokens{'season'}.  
+				 "\n|episode " 									.$tokens{'episode'}.
+				 "\n|tvshowid "									.$tokens{'tvshowid'}.
+				 "\n|thumbnail "								.$tokens{'thumbnail'}.
+				 "\n|file " 									.$tokens{'file'}.
+				 "\n|file_basename " 							.$tokens{'file_basename'}.
+				 "\n|fanart "									.$tokens{'fanart'}. 
+				 "\n|type "										.$tokens{'type'}. 
+				 "\n|streamdetails_audio_channels "				.$tokens{'streamdetails_audio_channels'}. 
+				 "\n|streamdetails_audio_codec "				.$tokens{'streamdetails_audio_codec'}. 
+				 "\n|streamdetails_audio_language "				.$tokens{'streamdetails_audio_language'}. 
+				 "\n|streamdetails_subtile "					.$tokens{'streamdetails_subtile'}. 
+				 "\n|streamdetails_video_aspect "				.$tokens{'streamdetails_video_aspect'}. 
+				 "\n|streamdetails_video_codec "				.$tokens{'streamdetails_video_codec'}. 
+				 "\n|streamdetails_video_height "				.$tokens{'streamdetails_video_height'}. 
+				 "\n|streamdetails_video_width "				.$tokens{'streamdetails_video_width'}. 
+				 "\n|streamdetails_video_stereomode "			.$tokens{'streamdetails_video_stereomode'}. 
+				 "\n");
+
+	}
+
+
+}
+
+
 sub screensaverXSqueezeDisplayLines {
 
+	#don't acutally use this
 	my $client = shift;
 
-	#holds the lines to be resturned - default is to return the time
-	my $state = "Inactive";
-	$line1 = strftime "%A, %B %e, %Y", localtime;
-	$line2 = strftime "%I:%M %p", localtime;
-	$line2 =~ s/^0+//;
+	#Blank out and only lines
+	$line1 = "";
+	$line2 = "";
+
+	#OK NOW GATHER ALL THE POSSIBLE DATA TO RETURN
+
+	#NON KODI DATA
+	$tokens{'current_date'} = strftime "%A, %B %e, %Y", localtime;
+	$tokens{'current_time'} = strftime "%I:%M %p", localtime;
+	#strip leading 0
+	$tokens{'current_time'} =~ s/^0+//;
+
+	#KODI DATA
 
 	#if we have more than 3 failed connections...
 	if ($failed_connects > CONNECTION_ATTEMPTS_BEFORE_SLEEP){
@@ -222,50 +438,27 @@ sub screensaverXSqueezeDisplayLines {
 			if  (exists $message->{result}){
 
 		    	#myDebug("Detected player activity - " . $resp->decoded_content);
-		    	$state = "Playing";
 
 		    	foreach my $player (@{$message->{result}}){
 		    		#myDebug("Player ". $player->{'playerid'} . " is type " . $player->{'type'});
 
 		    		if ($player->{'type'} == "video"){
-			    		# Get the play progress time
-						my $post_data = '{
-						    "jsonrpc": "2.0",
-						    "method": "Player.GetProperties",
-						    "params": {
-						        "properties": [
-						            "percentage",
-						            "time",
-						            "totaltime"
-						        ],
-						        "playerid": 1
-						    },
-						    "id": 1
-						}';
 
-						$resp = kodiJSON($post_data);
-						$message = decode_json $resp->decoded_content;
-
-						my $duration = ($message->{'result'}{'totaltime'}{'hours'} * 60 * 60) + ($message->{'result'}{'totaltime'}{'minutes'} * 60) + $message->{'result'}{'totaltime'}{'seconds'};
-						my $elapsed = ($message->{'result'}{'time'}{'minutes'} * 60) + $message->{'result'}{'time'}{'seconds'};
-						my $difference = $duration - $elapsed;
-						my $difference_hours = ($difference/(60*60))%24;
-						my $difference_minutes = ($difference/60)%60;
-						my $difference_seconds = $difference%60;
-						#myDebug("Difference " .  $difference . " Hours " . $difference_hours . " Minutes " . $difference_minutes . " Seconds " . $difference_seconds);
-						if ($difference_hours != 0){
-							$timeRemaining = sprintf("-%02d:%02d:%02d", $difference_hours, $difference_minutes, $difference_seconds)
-						}
-						else {
-							$timeRemaining = sprintf("-%02d:%02d", $difference_minutes, $difference_seconds);
-						}
+						#state change - let's get the extended info this once only and store it
+				    	if ($state == NOT_PLAYING){				    		
+				    		$state = PLAYING;
+							getExtendedNowPlaying($player->{'playerid'});				    		
+				    	}
+				    	#always get the current timers
+				    	getPlayingProgress($player->{'playerid'});
 
 						$line1 = $state;
-						$line2 = $line2 . "   [" . $timeRemaining . "]";
+						$line2 = $tokens{'current_time'} . "   [" . $tokens{'time_remaining'} . "]";
 				    } #player == video	
 				} # foreach $player
 			} #there was a result in the json
 		} #there was a resp->success
+
 		#no response from Kodi
 		else {
 			#count failed connections.  If we get to 3, stop hammering the server for a while...(See top)
@@ -277,8 +470,13 @@ sub screensaverXSqueezeDisplayLines {
 
 	} #failed_connects wwas less than 3
 
+	#if no data at this point, default display the date on line 1, time on line 2
+	if ($line1 eq "" and $line2 eq ""){
+		$state = NOT_PLAYING;
+		defaultDisplay();
+	}
 
-	#we've got here - package up the data and return it
+	#Package up the lines and return them
 	my $hash = {
 	   'center' => [ $line1,
 	                 $line2 ],
