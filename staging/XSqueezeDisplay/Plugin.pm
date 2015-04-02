@@ -38,14 +38,14 @@ my $prefs = preferences('plugin.xsqueezedisplay');
 my ($delay, $lines, $line1, $line2, $server_endpoint, $state, $failed_connects, $retry_timer);
 
 # Playing properties
-my %tokens  = 	(   "[current_date]", "",
-					"[current_time]", "",
-					"[duration]", "",		#presented in HH:MM:SS
+my %tokens  = 	(   "[current_date]", "",   #the date now (Monday, January 20, 2015)
+					"[current_time]", "",   #the time now (6:16 PM)
+					"[duration]", "",		#presented in [HH:]MM:SS
 					"[totaltime]", "",		#same as duration
-					"[time]", "",				#presented in HH:MM:SS
-					"[time_remaining]", "",	#calculated from duration - total time
-					"[percentage]", "",		
-					"[title]", "",
+					"[time]", "",			#playback time presented in [HH:]MM:SS
+					"[time_remaining]", "",	#playback time remaining presented in [HH:]MM:SS
+					"[percentage]", "",		#playback percentage
+					"[title]", "",	
 					"[album]", "",
 					"[artist]", "",
 					"[season]", "", 
@@ -452,24 +452,32 @@ sub screensaverXSqueezeDisplayLines {
 		    	#myDebug("Detected player activity - " . $resp->decoded_content);
 
 		    	foreach my $player (@{$message->{result}}){
-		    		#myDebug("Player ". $player->{'playerid'} . " is type " . $player->{'type'});
+		    		myDebug("Player ". $player->{'playerid'} . " is type " . $player->{'type'});
 
-		    		if ($player->{'type'} == "video"){
+					#state change - let's get the extended info this once only and store it
+			    	if (($player->{'type'} eq "video" or $player->{'type'} eq "audio") and $state == NOT_PLAYING){				    		
+			    		$state = PLAYING;
+						getExtendedNowPlaying($player->{'playerid'});				    		
+			    	}
 
-						#state change - let's get the extended info this once only and store it
-				    	if ($state == NOT_PLAYING){				    		
-				    		$state = PLAYING;
-							getExtendedNowPlaying($player->{'playerid'});				    		
-				    	}
-				    	#always get the current timers
-				    	getPlayingProgress($player->{'playerid'});
+	    			if ($player->{'type'} eq "video" or $player->{'type'} eq "audio"){
+			    	#always get the current timers
+			    		getPlayingProgress($player->{'playerid'});
+			    	}
 
-				    	#now pre the lines by swapping all tokens for values
-
+			    	#now pre the lines by swapping all tokens for values
+					if ($player->{'type'} eq "video"){
 						$line1 = token_swap($prefs->get('plugin_xsqueezedisplay_line1_video'));
 						$line2 = token_swap($prefs->get('plugin_xsqueezedisplay_line2_video'));
-
-				    } #player == video	
+					}
+					elsif ($player->{'type'} eq "picture"){
+						$line1 = token_swap($prefs->get('plugin_xsqueezedisplay_line1_picture'));
+						$line2 = token_swap($prefs->get('plugin_xsqueezedisplay_line2_picture'));
+					}
+					elsif ($player->{'type'} eq "audio"){
+						$line1 = token_swap($prefs->get('plugin_xsqueezedisplay_line1_audio'));
+						$line2 = token_swap($prefs->get('plugin_xsqueezedisplay_line2_audio'));
+					}				
 				} # foreach $player
 			} #there was a result in the json
 		} #there was a resp->success
