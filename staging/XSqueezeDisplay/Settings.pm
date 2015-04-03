@@ -34,10 +34,10 @@ sub new {
 		$prefs->set('plugin_xsqueezedisplay_kodijsonpassword', '');
 	}
 	if (!defined $prefs->get('plugin_xsqueezedisplay_line1_video')) {
-		$prefs->set('plugin_xsqueezedisplay_line1_video', '');
+		$prefs->set('plugin_xsqueezedisplay_line1_video', 'S[season]E[episode] - [title]');
 	}
 	if (!defined $prefs->get('plugin_xsqueezedisplay_line2_video')) {
-		$prefs->set('plugin_xsqueezedisplay_line2_video', '');
+		$prefs->set('plugin_xsqueezedisplay_line2_video', '[current_time]   [-[time_remaining]]');
 	}
 	if (!defined $prefs->get('plugin_xsqueezedisplay_line1_picture')) {
 		$prefs->set('plugin_xsqueezedisplay_line1_picture', '');

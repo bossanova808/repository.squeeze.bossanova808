@@ -36,35 +36,37 @@ my $prefs = preferences('plugin.xsqueezedisplay');
 
 my ($delay, $lines, $line1, $line2, $server_endpoint, $state, $failed_connects, $retry_timer);
 
-# Playing properties
-my %tokens  = 	(   "[current_date]", "",   #the date now (Monday, January 20, 2015)
-					"[current_time]", "",   #the time now (6:16 PM)
-					"[duration]", "",		#presented in [HH:]MM:SS
-					"[totaltime]", "",		#same as duration
-					"[time]", "",			#playback time presented in [HH:]MM:SS
-					"[time_remaining]", "",	#playback time remaining presented in [HH:]MM:SS
-					"[percentage]", "",		#playback percentage
-					"[title]", "",	
-					"[album]", "",
-					"[artist]", "",
-					"[season]", "", 
-					"[episode]", "",
-					"[showtitle]", "",
-					"[tvshowid]", "",
-					"[thumbnail]", "",
-					"[file]", "",
-					"[fanart]", "",
-					"[streamdetails_audio_channels]", "",
-					"[streamdetails_audio_codec]", "",
-					"[streamdetails_audio_language]", "",
-					"[streamdetails_subtile]", "",
-					"[streamdetails_video_aspect]", "",
-					"[streamdetails_video_codec]", "",
-					"[streamdetails_video_height]", "",
-					"[streamdetails_video_width]", "",
-					"[streamdetails_video_stereomode]", "",
-					"[type]", "",
-					"[resume]", ""
+# Data is retrieved largely as is from kodi and with matching names.
+# all tokens must be surrounded by square brackets.
+# but you can do, e.g. '[-[time_remaining]]' to get '[-06:23]' for a time remaining counter 
+
+my %tokens  = 	(   "[current_date]", "",   						#the date now (Uses your LMS format)
+					"[current_time]", "",   						#the time now (Uses yoru LMS format)
+					"[duration]", "",								#presented in [HH:]MM:SS (hours not shown unless > 0)
+					"[totaltime]", "",								#same as duration
+					"[time]", "",									#playback time presented in [HH:]MM:SS
+					"[time_remaining]", "",							#playback time remaining presented in [HH:]MM:SS
+					"[percentage]", "",								#playback percentage
+					"[title]", "",									#title of currently playing item, episode/album title e.g. "It is what it is"
+					"[season]", "", 								#Season number e.g. 3
+					"[episode]", "",								#epsiode number e.g. 12
+					"[showtitle]", "",								#Show title e.g. 'The Lost Room'
+					"[tvshowid]", "",								#Probably not useful!
+					"[thumbnail]", "",								#URL for the thumbnail image
+					"[file]", "",									#Path to the file (might change later to basename)
+					"[fanart]", "",									#URL to fanart
+					"[album]", "",									#If audio playing, the album name
+					"[artist]", "",									#Comma separated lists of artists for album
+					"[streamdetails_audio_channels]", "",			#Current selected audio, #of channels e.g. 2 for stereo
+					"[streamdetails_audio_codec]", "",				#Audio codec e.g. mp3
+					"[streamdetails_audio_language]", "",			#Language of selected audio, if available
+					"[streamdetails_subtile]", "",					#Subtitle details 
+					"[streamdetails_video_aspect]", "",				#Aspect ratio of the currently playing video, to two decimals, e..g 1.78
+					"[streamdetails_video_codec]", "",				#Codec of the video, e.g. h264
+					"[streamdetails_video_height]", "",				#height in pixels of currently playing video
+					"[streamdetails_video_width]", "",				#width in pixels of currently playing video
+					"[streamdetails_video_stereomode]", "",			#Not sure?
+					"[type]", ""									#E.g. 'episode'
 				);
 
 # Audio properties
@@ -211,6 +213,7 @@ sub format_time{
 sub getPlayingProgress {
 
 	my $playerid = shift;
+	my $log_output = shift;
 
 	# Always get the play progress time 
 	my $post_data = '{
@@ -242,17 +245,18 @@ sub getPlayingProgress {
 		my $difference_in_seconds = $duration_in_seconds - $elapsed_in_seconds;
 		$tokens{'[time_remaining]'} = format_time($difference_in_seconds);
 
-		$tokens{'[percentage]'} = $message->{'result'}{'percentage'};
+		$tokens{'[percentage]'} = sprintf("%2d",$message->{'result'}{'percentage'});
 
-		myDebug ("\n"											.
-				 "\n|duration_in_seconds " 						.$duration_in_seconds.
-				 "\n|duration "									.$tokens{'[duration]'}.
-				 "\n|elapsed_in_seconds " 						.$elapsed_in_seconds.
-				 "\n|time " 									.$tokens{'[time]'}.
-				 "\n|time_remaining " 							.$tokens{'[time_remaining]'}.
-				 "\n|percentage " 								.$tokens{'[percentage]'}.
-				 "\n");
-
+		if($log_output){
+			myDebug ("\n"											.
+					 "\n|duration_in_seconds " 						.$duration_in_seconds.
+					 "\n|duration "									.$tokens{'[duration]'}.
+					 "\n|elapsed_in_seconds " 						.$elapsed_in_seconds.
+					 "\n|time " 									.$tokens{'[time]'}.
+					 "\n|time_remaining " 							.$tokens{'[time_remaining]'}.
+					 "\n|percentage " 								.$tokens{'[percentage]'}.
+					 "\n", "info");
+		}
 	}
 
 }
@@ -260,6 +264,7 @@ sub getPlayingProgress {
 sub getExtendedNowPlaying {
 
 	my $playerid = shift;
+	my $log_output = shift;
 
 	my $post_data = '{
 		    "jsonrpc": "2.0",
@@ -347,36 +352,37 @@ sub getExtendedNowPlaying {
 		#array of subtitles
 		$tokens{'[streamdetails_subtile]'} 						= $message->{'result'}{'item'}{'streamdetails'}{'subtitle'}->[0];
 		#video details
-		$tokens{'[streamdetails_video_aspect]'} 				= $message->{'result'}{'item'}{'streamdetails'}{'video'}->[0]->{'aspect'};
+		$tokens{'[streamdetails_video_aspect]'} 				= sprintf("%.2f", $message->{'result'}{'item'}{'streamdetails'}{'video'}->[0]->{'aspect'}); #two decimal places is enough!
 		$tokens{'[streamdetails_video_codec]'} 					= $message->{'result'}{'item'}{'streamdetails'}{'video'}->[0]->{'codec'};
 		$tokens{'[streamdetails_video_height]'} 				= $message->{'result'}{'item'}{'streamdetails'}{'video'}->[0]->{'height'};
 		$tokens{'[streamdetails_video_width]'} 					= $message->{'result'}{'item'}{'streamdetails'}{'video'}->[0]->{'width'};
 		$tokens{'[streamdetails_video_stereomode]'} 			= $message->{'result'}{'item'}{'streamdetails'}{'video'}->[0]->{'stereomode'};
 
-		myDebug ("\n"											.
-				 "\n|title " 									.$tokens{'[title]'}.
-				 "\n|album "									.$tokens{'[album]'}.
-				 "\n|artist " 									.$tokens{'[artist]'}.
-				 "\n|showtitle " 								.$tokens{'[showtitle]'}.
-				 "\n|season "  									.$tokens{'[season]'}.  
-				 "\n|episode " 									.$tokens{'[episode]'}.
-				 "\n|tvshowid "									.$tokens{'[tvshowid]'}.
-				 "\n|thumbnail "								.$tokens{'[thumbnail]'}.
-				 "\n|file " 									.$tokens{'[file]'}.
-				 "\n|file_basename " 							.$tokens{'[file_basename]'}.
-				 "\n|fanart "									.$tokens{'[fanart]'}. 
-				 "\n|type "										.$tokens{'[type]'}. 
-				 "\n|streamdetails_audio_channels "				.$tokens{'[streamdetails_audio_channels]'}. 
-				 "\n|streamdetails_audio_codec "				.$tokens{'[streamdetails_audio_codec]'}. 
-				 "\n|streamdetails_audio_language "				.$tokens{'[streamdetails_audio_language]'}. 
-				 "\n|streamdetails_subtile "					.$tokens{'[streamdetails_subtile]'}. 
-				 "\n|streamdetails_video_aspect "				.$tokens{'[streamdetails_video_aspect]'}. 
-				 "\n|streamdetails_video_codec "				.$tokens{'[streamdetails_video_codec]'}. 
-				 "\n|streamdetails_video_height "				.$tokens{'[streamdetails_video_height]'}. 
-				 "\n|streamdetails_video_width "				.$tokens{'[streamdetails_video_width]'}. 
-				 "\n|streamdetails_video_stereomode "			.$tokens{'[streamdetails_video_stereomode]'}. 
-				 "\n");
-
+		if ($log_output){
+			myDebug ("\n"											.
+					 "\n|title " 									.$tokens{'[title]'}.
+					 "\n|album "									.$tokens{'[album]'}.
+					 "\n|artist " 									.$tokens{'[artist]'}.
+					 "\n|showtitle " 								.$tokens{'[showtitle]'}.
+					 "\n|season "  									.$tokens{'[season]'}.  
+					 "\n|episode " 									.$tokens{'[episode]'}.
+					 "\n|tvshowid "									.$tokens{'[tvshowid]'}.
+					 "\n|thumbnail "								.$tokens{'[thumbnail]'}.
+					 "\n|file " 									.$tokens{'[file]'}.
+					 "\n|file_basename " 							.$tokens{'[file_basename]'}.
+					 "\n|fanart "									.$tokens{'[fanart]'}. 
+					 "\n|type "										.$tokens{'[type]'}. 
+					 "\n|streamdetails_audio_channels "				.$tokens{'[streamdetails_audio_channels]'}. 
+					 "\n|streamdetails_audio_codec "				.$tokens{'[streamdetails_audio_codec]'}. 
+					 "\n|streamdetails_audio_language "				.$tokens{'[streamdetails_audio_language]'}. 
+					 "\n|streamdetails_subtile "					.$tokens{'[streamdetails_subtile]'}. 
+					 "\n|streamdetails_video_aspect "				.$tokens{'[streamdetails_video_aspect]'}. 
+					 "\n|streamdetails_video_codec "				.$tokens{'[streamdetails_video_codec]'}. 
+					 "\n|streamdetails_video_height "				.$tokens{'[streamdetails_video_height]'}. 
+					 "\n|streamdetails_video_width "				.$tokens{'[streamdetails_video_width]'}. 
+					 "\n|streamdetails_video_stereomode "			.$tokens{'[streamdetails_video_stereomode]'}. 
+					 "\n", "info");
+		}
 	}
 
 
@@ -449,12 +455,13 @@ sub screensaverXSqueezeDisplayLines {
 		    	#myDebug("Detected player activity - " . $resp->decoded_content);
 
 		    	foreach my $player (@{$message->{result}}){
-		    		myDebug("Player ". $player->{'playerid'} . " is type " . $player->{'type'});
+		    		#myDebug("Player ". $player->{'playerid'} . " is type " . $player->{'type'});
 
-					#state change - let's get the extended info this once only and store it
+					#state change - let's get the extended info this once only and store it, and also log it
 			    	if (($player->{'type'} eq "video" or $player->{'type'} eq "audio") and $state == NOT_PLAYING){				    		
 			    		$state = PLAYING;
-						getExtendedNowPlaying($player->{'playerid'});				    		
+						getExtendedNowPlaying($player->{'playerid'},"log_output");
+						getPlayingProgress($player->{'playerid'},"log_output");				    		
 			    	}
 
 	    			if ($player->{'type'} eq "video" or $player->{'type'} eq "audio"){
