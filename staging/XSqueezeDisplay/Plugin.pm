@@ -41,7 +41,7 @@ my ($delay, $lines, $line1, $line2, $server_endpoint, $state, $failed_connects, 
 # but you can do, e.g. '[-[time_remaining]]' to get '[-06:23]' for a time remaining counter 
 
 my %tokens  = 	(   "[current_date]", "",   						#the date now (Uses your LMS format)
-					"[current_time]", "",   						#the time now (Uses yoru LMS format)
+					"[current_time]", "",   						#the time now (Uses your LMS format)
 					"[duration]", "",								#presented in [HH:]MM:SS (hours not shown unless > 0)
 					"[totaltime]", "",								#same as duration
 					"[time]", "",									#playback time presented in [HH:]MM:SS
