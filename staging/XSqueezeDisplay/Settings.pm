@@ -44,10 +44,10 @@ sub new {
 	# 	$prefs->set('plugin_xsqueezedisplay_line2_picture', '');
 	# }
 	if (!defined $prefs->get('plugin_xsqueezedisplay_line1_audio')) {
-		$prefs->set('plugin_xsqueezedisplay_line1_audio', '');
+		$prefs->set('plugin_xsqueezedisplay_line1_audio', '[title] from [album] by [artist]');
 	}
 	if (!defined $prefs->get('plugin_xsqueezedisplay_line2_audio')) {
-		$prefs->set('plugin_xsqueezedisplay_line2_audio', '');
+		$prefs->set('plugin_xsqueezedisplay_line2_audio', '[current_time]   [-[time_remaining]]');
 	}
 
 	return $class->SUPER::new();
