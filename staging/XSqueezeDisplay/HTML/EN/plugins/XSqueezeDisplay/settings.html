@@ -23,12 +23,6 @@
         <input type="text" class="stdedit" name="plugin_xsqueezedisplay_line1_video" id="plugin_xsqueezedisplay_line1_video" value="[% prefs.plugin_xsqueezedisplay_line1_video %]" size="60">
     [% END %]
 
-	{!-- example of a checkbox for setting - for center/scroll option later --}
-	{!--
-	[% WRAPPER settingGroup title="PLUGIN_GOOGLEMUSIC_DISABLE_SSL" desc="PLUGIN_GOOGLEMUSIC_DISABLE_SSL_DESC" %]
-		<input type="checkbox" name="disable_ssl" [% IF prefs.disable_ssl %] checked [% END %]>
-	[% END %]
-	--}
     [% WRAPPER setting title="PLUGIN_XSQUEEZEDISPLAY_LINE2_VIDEO" desc="PLUGIN_XSQUEEZEDISPLAY_LINE2_VIDEO_DESC" %]
         <input type="text" class="stdedit" name="plugin_xsqueezedisplay_line2_video" id="plugin_xsqueezedisplay_line2_video" value="[% prefs.plugin_xsqueezedisplay_line2_video %]" size="60">
     [% END %]
@@ -39,16 +33,7 @@
         <input type="text" class="stdedit" name="plugin_xsqueezedisplay_line2_audio" id="plugin_xsqueezedisplay_line2_audio" value="[% prefs.plugin_xsqueezedisplay_line2_audio %]" size="60">
     [% END %]    
 
-{!-- Removed these as now playing info for pictures is kinda useless I think
 
-	[% WRAPPER setting title="PLUGIN_XSQUEEZEDISPLAY_LINE1_PICTURE" desc="PLUGIN_XSQUEEZEDISPLAY_LINE1_PICTURE_DESC" %]
-        <input type="text" class="stdedit" name="plugin_xsqueezedisplay_line1_picture" id="plugin_xsqueezedisplay_line1_picture" value="[% prefs.plugin_xsqueezedisplay_line1_picture %]" size="60">
-    [% END %]
-    [% WRAPPER setting title="PLUGIN_XSQUEEZEDISPLAY_LINE2_PICTURE" desc="PLUGIN_XSQUEEZEDISPLAY_LINE2_PICTURE_DESC" %]
-        <input type="text" class="stdedit" name="plugin_xsqueezedisplay_line2_picture" id="plugin_xsqueezedisplay_line2_picture" value="[% prefs.plugin_xsqueezedisplay_line2_picture %]" size="60">
-    [% END %]
-
---}
 
 <br>
 <p>Here's some sample output to give you an idea of the data coming back.  You'll see an entry like this in our LMS log each time you play a file on your kodi player (and this is my kids log, not mine!! ;) :</p>
