@@ -19,10 +19,11 @@ use Slim::Utils::Log;
 use LWP::UserAgent;
 use JSON::XS;
 
-use constant CONNECTION_ATTEMPTS_BEFORE_SLEEP => 2;
+use constant CONNECTION_ATTEMPTS_BEFORE_SLEEP => 1;
 use constant SLEEP_PERIOD => 10;
 use constant NOT_PLAYING => 0;
 use constant PLAYING => 1;
+use constant REFRESH_NOW_PLAYING_INTERVAL => 5;
 
 my $ua = LWP::UserAgent->new;
 
@@ -34,7 +35,7 @@ my $log = Slim::Utils::Log->addLogCategory({
 
 my $prefs = preferences('plugin.xsqueezedisplay');
 
-my ($delay, $lines, $line1, $line2, $server_endpoint, $state, $failed_connects, $retry_timer);
+my ($delay, $lines, $line1, $line2, $server_endpoint, $state, $failed_connects, $retry_timer, $refresh_now_playing);
 
 # Data is retrieved largely as is from kodi and with matching names.
 # all tokens must be surrounded by square brackets.
@@ -105,9 +106,11 @@ sub initPlugin {
 		$server_endpoint = 'http://' . $prefs->get('plugin_xsqueezedisplay_kodijsonuser') . ':' . $prefs->get('plugin_xsqueezedisplay_kodijsonpassword') . '@' . $prefs->get('plugin_xsqueezedisplay_kodiip') . ':' . $prefs->get('plugin_xsqueezedisplay_kodijsonport') . '/jsonrpc';
 	}
 	myDebug(join("","Kodi endpoint is ", $server_endpoint),"info");
+	#and initialise some tracking variables
 	$state = NOT_PLAYING;
 	$failed_connects = 0;
 	$retry_timer = SLEEP_PERIOD;
+	$refresh_now_playing = REFRESH_NOW_PLAYING_INTERVAL;
 }
 
 sub setMode {
@@ -438,6 +441,7 @@ sub screensaverXSqueezeDisplayLines {
 		#debug - introspect test the kodi json API here
 		#my $post_data = '{ "jsonrpc": "2.0", "method": "JSONRPC.Introspect", "params": { "filter": { "id": "Player.GetItem", "type": "method" } }, "id": 1 }';
 		# Get the active players
+
 		my $post_data = '{
 			"jsonrpc": "2.0", 
 			"method": "Player.GetActivePlayers", 
@@ -458,10 +462,19 @@ sub screensaverXSqueezeDisplayLines {
 		    		#myDebug("Player ". $player->{'playerid'} . " is type " . $player->{'type'});
 
 					#state change - let's get the extended info this once only and store it, and also log it
-			    	if (($player->{'type'} eq "video" or $player->{'type'} eq "audio") and $state == NOT_PLAYING){				    		
+			    	if ($state == NOT_PLAYING){				    		
 			    		$state = PLAYING;
 						getExtendedNowPlaying($player->{'playerid'},"log_output");
 						getPlayingProgress($player->{'playerid'},"log_output");				    		
+			    	}
+			    	
+			    	#Periodically refresh the now playing info so we pick up on song changes etc.
+			    	if ($refresh_now_playing > 0){
+			    		$refresh_now_playing--;
+			    	}
+			    	else {
+			    		$refresh_now_playing = REFRESH_NOW_PLAYING_INTERVAL;
+			    		getExtendedNowPlaying($player->{'playerid'});
 			    	}
 
 	    			if ($player->{'type'} eq "video" or $player->{'type'} eq "audio"){
@@ -474,11 +487,11 @@ sub screensaverXSqueezeDisplayLines {
 						$line1 = token_swap($prefs->get('plugin_xsqueezedisplay_line1_video'));
 						$line2 = token_swap($prefs->get('plugin_xsqueezedisplay_line2_video'));
 					}
-					elsif ($player->{'type'} eq "picture"){
+					if ($player->{'type'} eq "picture"){
 						$line1 = token_swap($prefs->get('plugin_xsqueezedisplay_line1_picture'));
 						$line2 = token_swap($prefs->get('plugin_xsqueezedisplay_line2_picture'));
 					}
-					elsif ($player->{'type'} eq "audio"){
+					if ($player->{'type'} eq "audio"){
 						$line1 = token_swap($prefs->get('plugin_xsqueezedisplay_line1_audio'));
 						$line2 = token_swap($prefs->get('plugin_xsqueezedisplay_line2_audio'));
 					}				

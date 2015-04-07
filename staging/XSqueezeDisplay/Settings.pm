@@ -16,8 +16,6 @@ use Slim::Utils::Prefs;
 
 my $prefs = preferences('plugin.xsqueezedisplay');
 
-$prefs->setValidate({ 'validator' => 'int' }, 'xbmcport');
-
 sub new {
 	my $class = shift;
 
@@ -39,12 +37,12 @@ sub new {
 	if (!defined $prefs->get('plugin_xsqueezedisplay_line2_video')) {
 		$prefs->set('plugin_xsqueezedisplay_line2_video', '[current_time]   [-[time_remaining]]');
 	}
-	if (!defined $prefs->get('plugin_xsqueezedisplay_line1_picture')) {
-		$prefs->set('plugin_xsqueezedisplay_line1_picture', '');
-	}
-	if (!defined $prefs->get('plugin_xsqueezedisplay_line2_picture')) {
-		$prefs->set('plugin_xsqueezedisplay_line2_picture', '');
-	}
+	# if (!defined $prefs->get('plugin_xsqueezedisplay_line1_picture')) {
+	# 	$prefs->set('plugin_xsqueezedisplay_line1_picture', '');
+	# }
+	# if (!defined $prefs->get('plugin_xsqueezedisplay_line2_picture')) {
+	# 	$prefs->set('plugin_xsqueezedisplay_line2_picture', '');
+	# }
 	if (!defined $prefs->get('plugin_xsqueezedisplay_line1_audio')) {
 		$prefs->set('plugin_xsqueezedisplay_line1_audio', '');
 	}
