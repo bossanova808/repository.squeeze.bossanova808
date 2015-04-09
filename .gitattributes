@@ -1,2 +1,2 @@
 #maintinf LF line endings as LMS is fussy about line endings in strings.txt
-* text eol=lf
+*.txt text eol-lf

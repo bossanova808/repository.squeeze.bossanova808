@@ -4,13 +4,13 @@
 		<title lang="EN">Bossanova808 Squeeze Add-ons</title>
 	</details>
 	<plugins>
-		<plugin name="XSqueezeDisplay" version="0.9.4" minTarget="7.7" maxTarget="*">
+		<plugin name="XSqueezeDisplay" version="0.9.5" minTarget="7.7" maxTarget="*">
 			<title lang="EN">XSqueezeDisplay</title>
 			<desc lang="EN">Display Kodi (XBMC) Now Playing info on a Squeezebox SB2/3/Classic display.</desc>
-			<url>http://dl.dropboxusercontent.com/u/108804/XSqueezeDisplay/XSqueezeDisplay-0.9.4.zip</url>
+			<url>http://dl.dropboxusercontent.com/u/108804/XSqueezeDisplay/XSqueezeDisplay-0.9.5.zip</url>
 			<creator>bossanova808</creator>
 			<email>bossanova808@gmail.com</email>
-			<sha>16856e8db2d60174a4bb3ee6fb4bbcdd672b4e13</sha>
+			<sha>f33e0d0a7fc6105502bdf9d2260e31deeb24761a</sha>
 		</plugin>
 	</plugins>
 </extensions>
