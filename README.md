@@ -1,8 +1,6 @@
 # Squeezebox (LMS) Addons by bossanova808.  
 
-*In active development 3rd April 2015 - lots of unreleased as yet stuff.  Will be released once it's fully working!  Adventurous folks can clone the repo of course...and pull requests gratefull accepted!*
-
-Just one for now - XSqueezeDisplay - displays Kodi (XBMC) Now Playing info using the line display on an SB2/3/Classic.
+Just one plugin for now - XSqueezeDisplay - displays information about what's playing on your Kodi (XBMC) system using the line display on an SB2/3/Classic.
 
 To install this repo, go to LMS->Settings->Plugins and add this repo at the end:
 
