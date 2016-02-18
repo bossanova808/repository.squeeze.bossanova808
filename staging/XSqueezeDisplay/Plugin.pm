@@ -19,8 +19,8 @@ use Slim::Utils::Log;
 use LWP::UserAgent;
 use JSON::XS;
 
-use constant CONNECTION_ATTEMPTS_BEFORE_SLEEP => 1;
-use constant SLEEP_PERIOD => 10;
+use constant CONNECTION_ATTEMPTS_BEFORE_SLEEP => 3;
+use constant SLEEP_PERIOD => 3;
 use constant NOT_PLAYING => 0;
 use constant PLAYING => 1;
 use constant REFRESH_NOW_PLAYING_INTERVAL => 5;
@@ -97,7 +97,6 @@ sub initPlugin {
 		getFunctions(), \&setScreenSaverMode,
 		undef, getDisplayName() );
 
-	# $delay = $prefs->get('plugin_fileviewer_updateinterval') + 1;
 	$delay = 1;
 	if ($prefs->get('plugin_xsqueezedisplay_kodijsonuser') eq ""){
 		$server_endpoint = join('', 'http://', $prefs->get('plugin_xsqueezedisplay_kodiip'),':',$prefs->get('plugin_xsqueezedisplay_kodijsonport'), '/jsonrpc');
@@ -166,7 +165,7 @@ sub kodiJSON {
 		my $post_data = shift;
 
 		#set a very short timeout
-		$ua->timeout(0.5);
+		$ua->timeout(0.8);
 
 		#assemble the JSON POST request
 		my $req = HTTP::Request->new(POST => $server_endpoint);
