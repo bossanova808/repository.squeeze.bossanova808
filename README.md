@@ -5,7 +5,7 @@ Just one plugin for now - XSqueezeDisplay - displays information about what's pl
 To install this repo, go to LMS->Settings->Plugins and add this repo at the end:
 
 ```
-http://github.com/bossanova808/repository.squeeze.bossanova808/raw/master/staging/repo.xml
+https://raw.githubusercontent.com/bossanova808/repository.squeeze.bossanova808/main/staging/repo.xml
 ```
 
 Restart your LMS.  You should then be able to install the addon from the repo and will receive updates automatically etc.
